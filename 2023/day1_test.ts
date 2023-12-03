@@ -8,7 +8,7 @@ const problem1 = input.split("\n").map((line) => line.replaceAll(/\D/g, ""))
     (digits) => digits.at(0)! + digits.at(-1)!,
   ).map(Number).reduce((acc, current) => acc + current, 0);
 
-Deno.test("Problem 1", () => {
+Deno.test("Day 1 Problem 1", () => {
   assertEquals(problem1, 54644);
 });
 
@@ -75,7 +75,6 @@ const problem2 = input.split("\n").map(
 ).filter((matches) => matches.length > 0).map((arr) => arr.join("")).map(Number)
   .reduce((acc, curr) => acc + curr, 0);
 
-console.log({ problem2 });
-Deno.test("Day Problem 2", () => {
+Deno.test("Day 1 Problem 2", () => {
   assertEquals(problem2, 53348);
 });
