@@ -4,13 +4,13 @@ const main = () => {
   // Problem 1:
   const problem1 = () => {
     const regex = /mul\(\d{1,3},\d{1,3}\)/g;
-    const muls = input.match(regex);
-    const result = muls
+    const result = input
+      .match(regex)
       ?.map((mul) => {
         const [first, second] = mul.match(/\d{1,3}/g) ?? [];
         return Number(first) * Number(second);
       })
-      .reduce((a, b) => a + b, 0);
+      .reduce((num1, num2) => num1 + num2, 0);
 
     return result;
   };
