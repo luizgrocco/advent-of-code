@@ -19,8 +19,8 @@ const main = () => {
     differenceList.push(Math.abs(listA[i] - listB[i]));
   }
 
-  const result = differenceList.reduce((a, b) => a + b, 0);
-  console.log({ result });
+  const problem1 = differenceList.reduce((a, b) => a + b, 0);
+  console.log("problem 1: ", problem1);
 
   // Problem 2:
   const frequencyList = [];
@@ -33,8 +33,8 @@ const main = () => {
     }
   }
 
-  const result2 = frequencyList.reduce((a, b) => a + b, 0);
-  console.log({ result2 });
+  const problem2 = frequencyList.reduce((a, b) => a + b, 0);
+  console.log("problem 2: ", problem2);
 };
 
 main();
