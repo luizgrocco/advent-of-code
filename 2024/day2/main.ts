@@ -41,10 +41,10 @@ const main = () => {
       if (isSafe) safeReports++;
     }
 
-    console.log(safeReports);
+    return safeReports;
   };
 
-  problem1(reports);
+  console.log("problem 1: ", problem1(reports));
 
   // Problem 2:
   const problem2 = (reports: number[][]) => {
@@ -98,10 +98,10 @@ const main = () => {
       }
     }
 
-    console.log(safeReports);
+    return safeReports;
   };
 
-  problem2(reports);
+  console.log("problem 2: ", problem2(reports));
 };
 
 main();
