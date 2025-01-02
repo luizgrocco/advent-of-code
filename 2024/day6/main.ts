@@ -1,23 +1,17 @@
 function main() {
   const input = Deno.readTextFileSync("input.txt");
-  const mappedArea = input.split("\n").map((line) => line.split(""));
+  const mappedArea = input.split("\n");
 
   type Vec2D = [number, number];
   type Guard = {
-    position: Vec2D;
-    direction: Vec2D;
+    row: number;
+    col: number;
+    dir: number;
   };
 
-  const guard: Guard = {
-    position: [0, 0],
-    direction: [0, -1],
-  };
-
-  const rotate90 = ([x, y]: Vec2D): Vec2D => [-y, x];
-
-  const move = ([posX, posY]: Vec2D, [dirX, dirY]: Vec2D): Vec2D => [
-    posX + dirX,
+  const move = ([posY, posX]: Vec2D, [dirY, dirX]: Vec2D): Vec2D => [
     posY + dirY,
+    posX + dirX,
   ];
 
   const isOutOfBounds = ([x, y]: Vec2D, mappedArea: string[][]): boolean => {
@@ -27,41 +21,70 @@ function main() {
   };
 
   const checkCollision = (
-    [posX, posY]: Vec2D,
+    [posY, posX]: Vec2D,
     mappedArea: string[][]
   ): boolean => mappedArea[posY][posX] === "#";
 
   function problem1(mappedArea: string[][]): number {
-    for (let y = 0; y < mappedArea.length; y++) {
-      for (let x = 0; x < mappedArea[y].length; x++) {
-        if (mappedArea[y][x] === "^") {
-          guard.position = [x, y];
+    const guard: Guard = {
+      row: 0,
+      col: 0,
+      dir: 0,
+    };
+
+    const patrolled = new Set<string>();
+
+    for (let row = 0; row < mappedArea.length; row++) {
+      for (let col = 0; col < mappedArea[row].length; col++) {
+        if (mappedArea[row][col] === "^") {
+          guard.row = row;
+          guard.col = col;
         }
       }
     }
 
-    while (!isOutOfBounds(guard.position, mappedArea)) {
-      const [currPosX, currPosY] = guard.position;
+    while (true) {
+      patrolled.add(`${guard.row}-${guard.col}`);
 
-      mappedArea[currPosY][currPosX] = "X";
+      const [dRow, dCol] = [
+        [-1, 0],
+        [0, 1],
+        [1, 0],
+        [0, -1],
+      ][guard.dir];
+      const nextCol = guard.col + dCol;
+      const nextRow = guard.row + dRow;
 
-      const nextPosition = move(guard.position, guard.direction);
+      if (
+        0 <= nextRow &&
+        nextRow < mappedArea.length &&
+        0 <= nextCol &&
+        nextCol < mappedArea[0].length
+      ) {
+        break;
+      }
 
-      if (isOutOfBounds(nextPosition, mappedArea)) break;
-
-      if (checkCollision(nextPosition, mappedArea)) {
-        guard.direction = rotate90(guard.direction);
+      if (mappedArea[nextRow][nextCol] === "#") {
+        guard.dir = (guard.dir + 1) % 4;
       } else {
-        guard.position = nextPosition;
+        guard.row = nextRow;
+        guard.col = nextCol;
       }
     }
 
-    return mappedArea.flat(Infinity).filter((block) => block === "X").length;
+    return patrolled.size;
   }
 
   console.log("Problem 1: ", problem1(mappedArea));
 
-  function problem2(mappedArea: string[][]) {
+  function problem2(mappedArea: string[][]): number {
+    const guard: Guard = {
+      position: [0, 0],
+      direction: [0, -1],
+    };
+
+    const patrolledArea = mappedArea.map(row => row.slice());
+
     for (let y = 0; y < mappedArea.length; y++) {
       for (let x = 0; x < mappedArea[y].length; x++) {
         if (mappedArea[y][x] === "^") {
@@ -70,21 +93,25 @@ function main() {
       }
     }
 
+    let obstaclesPlaced = 0;
+
     while (!isOutOfBounds(guard.position, mappedArea)) {
       const [currPosX, currPosY] = guard.position;
 
-      mappedArea[currPosY][currPosX] = "X";
+      patrolledArea[currPosY][currPosX] = "X";
 
-      const nextPosition = move(guard.position, guard.direction);
+      let nextPosition = move(guard.position, guard.direction);
+      if (isOutOfBounds(nextPosition, patrolledArea)) break;
 
-      if (isOutOfBounds(nextPosition, mappedArea)) break;
-
-      if (checkCollision(nextPosition, mappedArea)) {
+      if (checkCollision(nextPosition, patrolledArea)) {
         guard.direction = rotate90(guard.direction);
-      } else {
-        guard.position = nextPosition;
+        nextPosition = move(guard.position, guard.direction);
       }
+
+      guard.position = nextPosition;
     }
+
+    return obstaclesPlaced;
   }
 
   console.log("Problem 2: ", problem2(mappedArea));
